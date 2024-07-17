@@ -1,0 +1,131 @@
+@import "../../responsive.scss";
+.singlepage {
+  height: 100%;
+  display: flex;
+  .leftContainer {
+    flex: 3;
+  }
+  .rightContainer {
+    height: 100%;
+    flex: 2;
+    background-color: #fcf5f3;
+    @include md {
+      display: none;
+    }
+    .wrapper {
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      .general {
+        background-color: white;
+        border-radius: 10px;
+        .item {
+          padding: 15px;
+          display: flex;
+          align-items: center;
+          .icon {
+            background-color: #fcf5f3;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            img {
+              padding: 5px;
+              height: 100%;
+              width: 100%;
+              object-fit: contain;
+            }
+          }
+
+          .text {
+            padding-left: 10px;
+          }
+        }
+      }
+      .roomsize {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        .item {
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          padding: 10px;
+          background-color: white;
+          .icon {
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            img {
+              padding: 5px;
+              height: 100%;
+              width: 100%;
+              object-fit: contain;
+            }
+          }
+
+          .text {
+            // padding-left: 10px;
+            span {
+              font-size: 14px;
+              font-weight: bold;
+            }
+          }
+        }
+      }
+      .nearbyplaces {
+        display: flex;
+        background-color: white;
+        border-radius: 10px;
+        justify-content: space-between;
+        padding: 15px;
+        .item {
+          display: flex;
+          align-items: center;
+          .icon {
+            background-color: #fcf5f3;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            img {
+              padding: 5px;
+              height: 100%;
+              width: 100%;
+              object-fit: contain;
+            }
+          }
+          .text {
+            padding-left: 10px;
+            p {
+              font-size: 14px;
+            }
+          }
+        }
+      }
+      .mapContainer {
+        width: 100%;
+        height: 200px;
+      }
+      .buttons {
+        display: flex;
+        justify-content: space-between;
+
+        button {
+          padding: 20px;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          background-color: white;
+          border: 1px solid #fece51;
+          border-radius: 5px;
+          cursor: pointer;
+
+          img {
+            width: 16px;
+            height: 16px;
+          }
+        }
+      }
+    }
+  }
+}
