@@ -4,7 +4,6 @@ import "./map.scss";
 import "leaflet/dist/leaflet.css";
 import Pin from "../Pin/Pin";
 function Map({ items }) {
-  console.log(items);
   return (
     <MapContainer
       className="map"

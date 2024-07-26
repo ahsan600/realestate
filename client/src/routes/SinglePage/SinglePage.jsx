@@ -1,6 +1,6 @@
 import React from "react";
 import "./singlepage.scss";
-import { listData, singlePostData } from "../../lib/dummyData";
+import { singlePostData, userData } from "../../lib/dummyData";
 import utility from "../../assets/utility.png";
 import pet from "../../assets/pet.png";
 import fee from "../../assets/fee.png";
@@ -11,17 +11,41 @@ import school from "../../assets/school.png";
 import restaurant from "../../assets/restaurant.png";
 import bus from "../../assets/bus.png";
 import chat from "../../assets/chat.png";
+import pin from "../../assets/pin.png";
 import save from "../../assets/save.png";
 import Map from "../../components/Map/Map";
+import Slider from "../../components/Slider/Slider";
 function SinglePage() {
   const singlePageData = singlePostData;
-  const data = listData;
+
   return (
     <div className="singlepage">
       <div className="leftContainer">
-        <div className="top">top</div>
-        <div className="center">center</div>
-        <div className="bottom">bottom</div>
+        <div className="wrapper">
+          <div className="top">
+            <Slider images={singlePageData.images} />
+          </div>
+          <div className="center">
+            <div className="info-left">
+              <h1>{singlePageData.title}</h1>
+              <div className="address">
+                <p>
+                  <img src={pin} alt="" />
+                  {singlePageData.address}
+                </p>
+              </div>
+              <span>${singlePageData.price}</span>
+            </div>
+            <div className="info-right">
+              <img src={userData.img} alt="" />
+              <br />
+              <span>{userData.name}</span>
+            </div>
+          </div>
+          <div className="bottom">
+            <p>{singlePageData.description}</p>
+          </div>
+        </div>
       </div>
       <div className="rightContainer">
         <div className="wrapper">

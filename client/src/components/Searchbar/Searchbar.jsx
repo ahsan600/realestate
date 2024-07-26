@@ -18,7 +18,6 @@ function Searchbar() {
   };
   const onHandleSubmit = (e) => {
     e.preventDefault();
-    console.log(activeType);
     setActiveType((pv) => ({
       ...pv,
       location: "",

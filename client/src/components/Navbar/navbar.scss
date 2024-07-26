@@ -50,8 +50,54 @@ nav {
     justify-content: flex-end;
     background-color: #fcf5f3;
     height: 100%;
+    @include sm {
+      gap: 20px;
+    }
     @include md {
       background-color: transparent;
+    }
+   
+    .signOut {
+      position: relative;
+      .icon {
+        background-color: red;
+        width: fit-content;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        padding: 15px;
+        border-radius: 100px;
+        position: absolute;
+        top: -12px;
+        right: -12px;
+      }
+    }
+
+    .userImage {
+      // width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+      span {
+        @include sm {
+          display: none;
+        }
+        @include md {
+          display: none;
+        }
+        font-size: 15px;
+        font-weight: 600;
+      }
     }
     a {
       padding: 12px 24px;
