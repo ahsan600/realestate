@@ -1,31 +1,34 @@
-import prisma from "../lib/prisma.js";
+import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiRespone.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { uploadImage } from "../utils/cloudinary.js";
 
 const register = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
   const hashPassword = await bcrypt.hash(password, 10);
-  const checkUser = await prisma.user.findUnique({
-    where: {
-      username,
-      email,
-    },
-  });
-  if (checkUser) {
-    return res
-      .status(401)
-      .json(new ApiError(401, "Account Creation Failed", "User Already Exist"));
+  const checkUser = await User.find({ username, email });
+  if (checkUser.length !== 0) {
+    throw new ApiError(401, "Account Creation Failed", "User Already Exist");
   }
-  const createUser = await prisma.user.create({
-    data: {
-      username,
-      email,
-      password: hashPassword,
-    },
-  });
+  const localAvatarPath = req.file?.path;
+  if (!localAvatarPath) {
+    throw new ApiError(401, "Avatar is not Uploaded");
+  }
+  const cloudinaryUrl = await uploadImage(localAvatarPath);
+
+  if (!cloudinaryUrl) {
+    throw new ApiError(401, "Avatar is not Uploaded to Cloudinary");
+  }
+  const data = {
+    username,
+    email,
+    password: hashPassword,
+    avatar: cloudinaryUrl,
+  };
+  const createUser = await User.create(data);
 
   res
     .status(201)
@@ -34,28 +37,23 @@ const register = asyncHandler(async (req, res) => {
 
 const login = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
-  const checkUser = await prisma.user.findUnique({
-    where: {
-      username,
-    },
-  });
-  if (!checkUser) {
-    return res
-      .status(401)
-      .json(new ApiError(401, "Login Email Failed", "Invalid Credentials"));
+  const checkUser = await User.findOne({ username });
+
+  if (checkUser.length == 0) {
+    throw new ApiError(401, "Login Email Failed", "Invalid Credentials");
   }
-  const checkPassword = await bcrypt.compare(password, checkUser.password);
+  const checkPassword = bcrypt.compareSync(password, checkUser.password);
+
   if (!checkPassword) {
-    return res
-      .status(401)
-      .json(new ApiError(401, "Login Password Failed", "Invalid Credentials"));
+    throw new ApiError(401, "Login Password Failed", "Invalid Credentials");
   }
   const age = 1000 * 60 * 60 * 24 * 7;
+
   const token = jwt.sign(
     {
       id: checkUser.id,
     },
-    process.env.JWT_SECERT_KEY,
+    process.env.JWT_SECRET_KEY,
     { expiresIn: age }
   );
   res
@@ -64,7 +62,7 @@ const login = asyncHandler(async (req, res) => {
       maxAge: age,
     })
     .status(200)
-    .json(new ApiResponse(200, "User Login Successfully"));
+    .json(new ApiResponse(200, "User Login Successfully", checkUser));
 });
 
 const logout = asyncHandler(async (req, res) => {
