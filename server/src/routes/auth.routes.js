@@ -6,6 +6,6 @@ import { upload } from "../middlewares/multer.js";
 
 router.route("/register").post(upload.single("avatar"), register);
 router.route("/login").post(login);
-router.route("/logout").post(logout);
+router.route("/logout").get(logout);
 
 export default router;

@@ -5,6 +5,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import loader from "../../assets/loader.gif";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setAuth } from "../../redux/authSlice";
 
 function Login() {
   const {
@@ -13,6 +15,8 @@ function Login() {
     reset,
     formState: { errors },
   } = useForm({ mode: "all" });
+  const dispatch = useDispatch();
+  const auth = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -31,9 +35,10 @@ function Login() {
       });
       toast.success(responseData.message, {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 1500,
       });
       localStorage.setItem("access-token", responseData.data.AcessToken);
+      dispatch(setAuth(true));
       reset();
       setTimeout(() => {
         navigate("/");
@@ -41,7 +46,7 @@ function Login() {
     } catch (error) {
       toast.error("Registration failed. Please try again.", {
         position: "top-right",
-        autoClose: 3000,
+        autoClose: 1500,
       });
     } finally {
       setLoading(false);

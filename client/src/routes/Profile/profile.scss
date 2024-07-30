@@ -48,6 +48,25 @@
         }
       }
       .center {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        .logout{
+          a {
+            width: fit-content;
+            padding: 8px 18px;
+            border-radius: 20px;
+            @include sm {
+              padding: 10px 10px;
+              font-size: 14px;
+            }
+          }
+          .button {
+            color: white;
+            background-color: red;
+          }
+        }
+      
         .detail {
           display: flex;
           flex-direction: column;

@@ -5,13 +5,11 @@ import menu from "../../assets/menu.png";
 // import menu from "../../assets/menu.png";
 import { Link } from "react-router-dom";
 import { userData } from "../../lib/dummyData";
+import { useSelector } from "react-redux";
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const user = userData;
-const auth=true
-  useEffect(()=>{
-    console.log("useEffect")
-  },[localStorage.getItem("access-token")])
+  const auth = useSelector((state) => state.auth.isAuthenticated);
   const navItems = [
     {
       name: "Home",
@@ -38,6 +36,7 @@ const auth=true
       slug: "/signup",
     },
   ];
+  console.log("navbar", auth);
   return (
     <nav>
       <div className="left">
@@ -56,7 +55,7 @@ const auth=true
         )}
       </div>
       <div className="right">
-        {auth? (
+        {!auth ? (
           <>
             <Link to="/signin">SignIn</Link>
             <Link className="signOut" to="/signup">
