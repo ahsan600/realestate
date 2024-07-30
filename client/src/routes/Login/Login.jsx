@@ -4,68 +4,68 @@ import "./login.scss";
 import axios from "axios";
 import { toast } from "react-toastify";
 import loader from "../../assets/loader.gif";
+import { Link, useNavigate } from "react-router-dom";
+
 function Login() {
   const {
     register,
     handleSubmit,
-    getValues,
     reset,
     formState: { errors },
   } = useForm({ mode: "all" });
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [confirmShowPassword, setConfirmShowPassword] = useState(false);
 
   const toggleShowPassword = () => setShowPassword(!showPassword);
-  const toggleConfirmShowPassword = () =>
-    setConfirmShowPassword(!confirmShowPassword);
 
   const onSubmit = async (data) => {
     setLoading(true);
-    const formData = new FormData();
-    formData.append("username", data.username);
-    formData.append("email", data.email);
-    formData.append("phoneno", data.ph_no);
-    formData.append("password", data.password);
+    const { email, password } = data;
+    console.log(email, password);
 
-    if (data.image.length > 0) {
-      formData.append("avatar", data.image[0]);
+    try {
+      const { data: responseData } = await axios.post("/api/auth/login", {
+        email,
+        password,
+      });
+      toast.success(responseData.message, {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      localStorage.setItem("access-token", responseData.data.AcessToken);
+      reset();
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
+    } catch (error) {
+      toast.error("Registration failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    } finally {
+      setLoading(false);
     }
-
-    const { data: responseData } = await axios.post(
-      "/api/auth/register",
-      formData
-    );
-    setLoading(false);
-    toast.success(responseData.message, {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    reset();
   };
+
   useEffect(() => {
     return () => {
       setLoading(false);
     };
   }, []);
+
   return (
-    <div className="form-container">
-      <div className="form-content">
-        <h3>Login</h3>
+    <div className="login-form-container">
+      <div className="login-form-content">
+        <h3 className="login-header">Login</h3>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="form-group">
-            <label htmlFor="email" className="form-label">
+          <div className="login-form-group">
+            <label htmlFor="email" className="login-form-label">
               Email
             </label>
             <input
               type="email"
-              className="form-control"
+              className="login-form-control"
               id="email"
               placeholder="Enter Your Email"
               autoComplete="off"
@@ -75,18 +75,18 @@ function Login() {
               })}
             />
             {errors.email && (
-              <p className="error-message">{errors.email.message}</p>
+              <p className="login-error-message">{errors.email.message}</p>
             )}
           </div>
 
-          <div className="form-group">
-            <label htmlFor="password" className="form-label">
+          <div className="login-form-group">
+            <label htmlFor="password" className="login-form-label">
               Password
             </label>
-            <div className="password-wrapper">
+            <div className="login-password-wrapper">
               <input
                 type={showPassword ? "text" : "password"}
-                className="form-control"
+                className="login-form-control"
                 id="password"
                 placeholder="Enter Your Password"
                 {...register("password", {
@@ -107,10 +107,13 @@ function Login() {
               ></i>
             </div>
             {errors.password && (
-              <p className="error-message">{errors.password.message}</p>
+              <p className="login-error-message">{errors.password.message}</p>
             )}
           </div>
-
+          <div className="register-section">
+            <p>If you don't have an account?</p>
+            <Link to="/signup">Register</Link>
+          </div>
           <button
             type="submit"
             style={{ height: "50px" }}

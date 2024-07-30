@@ -4,6 +4,7 @@ import "./register.scss";
 import axios from "axios";
 import { toast } from "react-toastify";
 import loader from "../../assets/loader.gif";
+import { Link } from "react-router-dom";
 function Register() {
   const {
     register,
@@ -195,7 +196,10 @@ function Register() {
               <p className="error-message">{errors.image.message}</p>
             )}
           </div>
-
+          <div className="register-section">
+            <p>If you already have an account?</p>
+            <Link to="/signin">Login</Link>
+          </div>
           <button
             type="submit"
             style={{ height: "50px" }}

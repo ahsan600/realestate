@@ -43,8 +43,8 @@ const register = asyncHandler(async (req, res) => {
 });
 
 const login = asyncHandler(async (req, res) => {
-  const { username, password } = req.body;
-  const user = await User.findOne({ username });
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
 
   if (user.length == 0) {
     throw new ApiError(401, "Login Email Failed", "Invalid Credentials");

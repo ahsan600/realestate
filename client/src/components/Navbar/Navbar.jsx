@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./navbar.scss";
 import logo from "../../assets/logo.png";
 import menu from "../../assets/menu.png";
@@ -8,8 +8,10 @@ import { userData } from "../../lib/dummyData";
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const user = userData;
-  console.log(user.name);
-  let auth = true;
+const auth=true
+  useEffect(()=>{
+    console.log("useEffect")
+  },[localStorage.getItem("access-token")])
   const navItems = [
     {
       name: "Home",
@@ -54,7 +56,7 @@ function Navbar() {
         )}
       </div>
       <div className="right">
-        {auth ? (
+        {auth? (
           <>
             <Link to="/signin">SignIn</Link>
             <Link className="signOut" to="/signup">
