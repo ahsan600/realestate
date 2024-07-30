@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./profile.scss";
 import { Link, useNavigate } from "react-router-dom";
 import { listData, userData } from "../../lib/dummyData";
@@ -15,7 +15,6 @@ function Profile() {
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth.isAuthenticated);
   const handleLogout = async () => {
-    console.log("hi");
     const { data: responseData } = await axios.get("/api/auth/logout");
     toast.success(responseData.message, {
       position: "top-right",
@@ -27,6 +26,7 @@ function Profile() {
       navigate("/");
     }, 1500);
   };
+
   return (
     <div className="profile">
       <div className="leftContainer">
