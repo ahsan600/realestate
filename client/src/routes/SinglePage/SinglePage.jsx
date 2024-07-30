@@ -49,7 +49,9 @@ function SinglePage() {
       </div>
       <div className="rightContainer">
         <div className="wrapper">
-          <h3>General</h3>
+          <div className="title">
+            <span>General</span>
+          </div>
           <div className="general">
             <div className="item">
               <div className="icon">
@@ -81,7 +83,9 @@ function SinglePage() {
               </div>
             </div>
           </div>
-          <h3>Room Sizes</h3>
+          <div className="title">
+            <span>Room Sizes</span>
+          </div>
           <div className="roomsize">
             <div className="item">
               <div className="icon">
@@ -110,7 +114,9 @@ function SinglePage() {
               </div>
             </div>
           </div>
-          <h3>Nearby Places</h3>
+          <div className="title">
+            <span> Nearby Places</span>
+          </div>
           <div className="nearbyplaces">
             <div className="item">
               <div className="icon">
@@ -142,7 +148,9 @@ function SinglePage() {
               </div>
             </div>
           </div>
-          <h3>Location</h3>
+          <div className="title">
+            <span> Location</span>
+          </div>
           <div className="mapContainer">
             <Map items={[singlePostData]} />
           </div>

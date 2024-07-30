@@ -7,10 +7,16 @@ import jwt from "jsonwebtoken";
 import { uploadImage } from "../utils/cloudinary.js";
 
 const register = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, phoneno } = req.body;
+  console.log(req.body);
+  if (
+    [username, email, password, phoneno].some((field) => field.trim() === "")
+  ) {
+    throw new ApiError(401, "All fields are required ");
+  }
   const hashPassword = await bcrypt.hash(password, 10);
-  const checkUser = await User.find({ username, email });
-  if (checkUser.length !== 0) {
+  const user = await User.find({ username, email });
+  if (user.length !== 0) {
     throw new ApiError(401, "Account Creation Failed", "User Already Exist");
   }
   const localAvatarPath = req.file?.path;
@@ -25,6 +31,7 @@ const register = asyncHandler(async (req, res) => {
   const data = {
     username,
     email,
+    phoneno,
     password: hashPassword,
     avatar: cloudinaryUrl,
   };
@@ -37,23 +44,23 @@ const register = asyncHandler(async (req, res) => {
 
 const login = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
-  const checkUser = await User.findOne({ username });
+  const user = await User.findOne({ username });
 
-  if (checkUser.length == 0) {
+  if (user.length == 0) {
     throw new ApiError(401, "Login Email Failed", "Invalid Credentials");
   }
-  const checkPassword = bcrypt.compareSync(password, checkUser.password);
+  const userPassword = bcrypt.compareSync(password, user.password);
 
-  if (!checkPassword) {
+  if (!userPassword) {
     throw new ApiError(401, "Login Password Failed", "Invalid Credentials");
   }
   const age = 1000 * 60 * 60 * 24 * 7;
 
   const token = jwt.sign(
     {
-      id: checkUser.id,
+      id: user.id,
     },
-    process.env.JWT_SECRET_KEY,
+    process.env.JWT_SECERT_KEY,
     { expiresIn: age }
   );
   res
@@ -62,7 +69,12 @@ const login = asyncHandler(async (req, res) => {
       maxAge: age,
     })
     .status(200)
-    .json(new ApiResponse(200, "User Login Successfully", checkUser));
+    .json(
+      new ApiResponse(200, "User Login Successfully", {
+        AcessToken: token,
+        user,
+      })
+    );
 });
 
 const logout = asyncHandler(async (req, res) => {

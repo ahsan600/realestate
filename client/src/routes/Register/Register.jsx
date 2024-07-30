@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import "./login.scss";
+import "./register.scss";
 import axios from "axios";
 import { toast } from "react-toastify";
 import loader from "../../assets/loader.gif";
-function Login() {
+function Register() {
   const {
     register,
     handleSubmit,
@@ -57,8 +57,31 @@ function Login() {
   return (
     <div className="form-container">
       <div className="form-content">
-        <h3>Login</h3>
+        <h3>Register</h3>
         <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="form-group">
+            <label htmlFor="username" className="form-label">
+              Username
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="username"
+              placeholder="Enter Your Username"
+              autoComplete="off"
+              {...register("username", {
+                required: "Username is required",
+                pattern: {
+                  value: /^[a-zA-Z0-9_]{3,16}$/,
+                  message: "Invalid username",
+                },
+              })}
+            />
+            {errors.username && (
+              <p className="error-message">{errors.username.message}</p>
+            )}
+          </div>
+
           <div className="form-group">
             <label htmlFor="email" className="form-label">
               Email
@@ -76,6 +99,24 @@ function Login() {
             />
             {errors.email && (
               <p className="error-message">{errors.email.message}</p>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="ph_no" className="form-label">
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              className="form-control"
+              id="ph_no"
+              placeholder="Enter Your Phone Number"
+              {...register("ph_no", {
+                required: "Phone number is required",
+              })}
+            />
+            {errors.ph_no && (
+              <p className="error-message">{errors.ph_no.message}</p>
             )}
           </div>
 
@@ -111,6 +152,50 @@ function Login() {
             )}
           </div>
 
+          <div className="form-group">
+            <label htmlFor="confirm_password" className="form-label">
+              Confirm Password
+            </label>
+            <div className="password-wrapper">
+              <input
+                type={confirmShowPassword ? "text" : "password"}
+                className="form-control"
+                id="confirm_password"
+                placeholder="Confirm Your Password"
+                {...register("confirm_password", {
+                  required: "Confirm password is required",
+                  validate: (value) =>
+                    value === getValues("password") || "Passwords do not match",
+                })}
+              />
+              <i
+                className={`fa-solid ${
+                  confirmShowPassword ? "fa-eye" : "fa-eye-slash"
+                }`}
+                onClick={toggleConfirmShowPassword}
+              ></i>
+            </div>
+            {errors.confirm_password && (
+              <p className="error-message">{errors.confirm_password.message}</p>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="image" className="form-label">
+              Upload Image
+            </label>
+            <input
+              type="file"
+              className="form-control"
+              id="image"
+              accept="image/png, image/jpeg"
+              {...register("image")}
+            />
+            {errors.image && (
+              <p className="error-message">{errors.image.message}</p>
+            )}
+          </div>
+
           <button
             type="submit"
             style={{ height: "50px" }}
@@ -131,4 +216,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;

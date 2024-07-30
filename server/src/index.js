@@ -6,7 +6,7 @@ dotenv.config({
   path: "./.env",
 });
 
-const PORT = 3000;
+const PORT = 1001;
 
 connection()
   .then(() => {

@@ -13,6 +13,9 @@
       flex-direction: column;
       gap: 20px;
       padding-right: 100px;
+      .title{
+        font-size: 60px;
+      }
       @include sm {
         padding: 0;
       }
@@ -21,6 +24,10 @@
       .boxes {
         display: flex;
         justify-content: space-between;
+        h2{
+          font-weight: 300;
+          font-size: 20px;
+        }
         @include sm {
           display: none;
         }

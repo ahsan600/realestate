@@ -9,7 +9,7 @@ function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const user = userData;
   console.log(user.name);
-  let auth = false;
+  let auth = true;
   const navItems = [
     {
       name: "Home",
@@ -56,8 +56,8 @@ function Navbar() {
       <div className="right">
         {auth ? (
           <>
-            <Link to="login">SignIn</Link>
-            <Link className="signOut" to="/register">
+            <Link to="/signin">SignIn</Link>
+            <Link className="signOut" to="/signup">
               SignUp
             </Link>
           </>

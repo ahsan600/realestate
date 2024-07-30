@@ -3,8 +3,9 @@ import Layout from "./routes/Layout/Layout";
 import HomePage from "./routes/HomePage/HomePage";
 import ListPage from "./routes/ListPage/ListPage";
 import SinglePage from "./routes/SinglePage/SinglePage";
-import Login from "./routes/Login/Login";
 import Profile from "./routes/Profile/Profile";
+import Register from "./routes/Register/Register";
+import Login from "./routes/Login/Login";
 
 function App() {
   const router = createBrowserRouter([
@@ -15,7 +16,8 @@ function App() {
         { path: "/", element: <HomePage /> },
         { path: "/list", element: <ListPage /> },
         { path: "/:id", element: <SinglePage /> },
-        { path: "/login", element: <Login /> },
+        { path: "/signin", element: <Login /> },
+        { path: "/signup", element: <Register /> },
         { path: "/profile", element: <Profile /> },
       ],
     },
