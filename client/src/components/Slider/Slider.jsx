@@ -6,13 +6,11 @@ function Slider({ images }) {
   const [openSlider, setOpenSlider] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
   const openSliderImage = (state) => {
-    console.log(state);
     if (!state) {
       setOpenSlider(state);
       setImageIndex(0);
     } else setOpenSlider(true);
   };
-  console.log("HIHHIHI", openSlider);
   const sliderChange = (index) => {
     if (index == -1) return;
     if (index >= images.length) return;
@@ -50,6 +48,7 @@ function Slider({ images }) {
       <div className="smallImage">
         {images.slice(1).map((image, index) => (
           <img
+            key={index}
             src={image}
             alt=""
             onClick={() => {

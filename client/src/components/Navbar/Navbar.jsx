@@ -1,13 +1,12 @@
-import { useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import "./navbar.scss";
 import logo from "../../assets/logo.png";
 import menu from "../../assets/menu.png";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { AuthContext } from "../Context/AuthContext";
 function Navbar() {
+  const { currentUser } = useContext(AuthContext);
   const [menuOpen, setMenuOpen] = useState(false);
-  const userData = JSON.parse(localStorage.getItem("user"));
-  const auth = useSelector((state) => state.auth.isAuthenticated);
   const navItems = [
     {
       name: "Home",
@@ -53,7 +52,7 @@ function Navbar() {
         )}
       </div>
       <div className="right">
-        {!auth ? (
+        {!currentUser ? (
           <>
             <Link to="/signin">SignIn</Link>
             <Link className="signOut" to="/signup">
@@ -63,8 +62,8 @@ function Navbar() {
         ) : (
           <>
             <div className="userImage">
-              <img src={userData.avatar} alt="" />
-              <span>{userData.username}</span>
+              <img src={currentUser.avatar} alt="" />
+              <span>{currentUser.username}</span>
             </div>
             <Link className="signOut" to="/profile">
               Profile

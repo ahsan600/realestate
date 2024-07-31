@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import "./register.scss";
+import "./updateprofile.scss";
 import { toast } from "react-toastify";
 import loader from "../../assets/loader.gif";
 import { Link } from "react-router-dom";
 import apiRequest from "../../lib/apiRequest";
-function Register() {
+function UpdateProfile() {
   const {
     register,
     handleSubmit,
@@ -37,6 +37,10 @@ function Register() {
         "/api/auth/register",
         formData
       );
+      // axios.post(
+      //   "/api/auth/register",
+      //   formData
+      // );
       toast.success(responseData.message, {
         position: "top-right",
         autoClose: 3000,
@@ -226,4 +230,4 @@ function Register() {
   );
 }
 
-export default Register;
+export default UpdateProfile;

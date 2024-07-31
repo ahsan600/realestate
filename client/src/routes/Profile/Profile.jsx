@@ -1,34 +1,36 @@
-import React, { useEffect } from "react";
+import React, { useContext } from "react";
 import "./profile.scss";
 import { Link, useNavigate } from "react-router-dom";
-import { listData, userData } from "../../lib/dummyData";
+import { listData } from "../../lib/dummyData";
 import Card from "../../components/Card/Card";
 import Chat from "../../components/Chat/Chat";
-import { useDispatch, useSelector } from "react-redux";
-import { setAuth } from "../../redux/authSlice";
 import { toast } from "react-toastify";
-import axios from "axios";
 import apiRequest from "../../lib/apiRequest";
+import { AuthContext } from "../../components/Context/AuthContext";
+
 function Profile() {
-  // const user = userData;
   const data = listData;
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const auth = useSelector((state) => state.auth.isAuthenticated);
-  const userData = JSON.parse(localStorage.getItem("user"));
-  console.log(userData);
+  const { currentUser, updateUser } = useContext(AuthContext);
   const handleLogout = async () => {
-    const { data: responseData } = await apiRequest.get("/api/auth/logout");
-    // axios.get("/api/auth/logout");
-    toast.success(responseData.message, {
-      position: "top-right",
-      autoClose: 1000,
-    });
-    localStorage.removeItem("user");
-    setTimeout(() => {
-      dispatch(setAuth(false));
-      navigate("/");
-    }, 1500);
+    try {
+      const { data: responseData } = await apiRequest.get("/api/auth/logout");
+      toast.success(responseData.message, {
+        position: "top-right",
+        autoClose: 1000,
+      });
+      localStorage.removeItem("user");
+
+      setTimeout(() => {
+        updateUser(null);
+        navigate("/");
+      }, 1500);
+    } catch (error) {
+      toast.error("Logout failed. Please try again.", {
+        position: "top-right",
+        autoClose: 1500,
+      });
+    }
   };
 
   return (
@@ -42,30 +44,28 @@ function Profile() {
           <div className="center">
             <div className="detail">
               <p>
-                Avatar: <img src={userData.avatar} alt="" />
+                Avatar: <img src={currentUser?.avatar} alt="" />
               </p>
               <p>
-                Username: <span>{userData.username}</span>
+                Username: <span>{currentUser?.username}</span>
               </p>
               <p>
-                Email: <span>{userData.email}</span>
+                Email: <span>{currentUser?.email}</span>
               </p>
             </div>
-            {auth && (
-              <div onClick={handleLogout} className="logout">
-                <Link className="button">
-                  <span>Logout</span>
-                </Link>
-              </div>
-            )}
+            <div onClick={handleLogout} className="logout">
+              <Link className="button">
+                <span>Logout</span>
+              </Link>
+            </div>
           </div>
           <div className="row">
             <h2>My List</h2>
             <Link className="button">Add New Post</Link>
           </div>
           <div className="list">
-            {data.map((item) => (
-              <Card data={item} />
+            {data.map((item, index) => (
+              <Card key={index} data={item} />
             ))}
           </div>
         </div>

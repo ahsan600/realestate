@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import "./login.scss";
-import axios from "axios";
+
 import { toast } from "react-toastify";
 import loader from "../../assets/loader.gif";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { setAuth } from "../../redux/authSlice";
 import apiRequest from "../../lib/apiRequest";
+import { AuthContext } from "../../components/Context/AuthContext.jsx";
 
 function Login() {
   const {
@@ -16,8 +15,8 @@ function Login() {
     reset,
     formState: { errors },
   } = useForm({ mode: "all" });
-  const dispatch = useDispatch();
-  const auth = useSelector((state) => state.auth);
+  const { updateUser } = useContext(AuthContext);
+  console.log(updateUser);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -27,20 +26,16 @@ function Login() {
   const onSubmit = async (data) => {
     setLoading(true);
     const { email, password } = data;
-    console.log(email, password);
 
     try {
       const { data: responseData } = await apiRequest.post("/api/auth/login", {
         email,
         password,
       });
-      // axios.post("/api/auth/login", {
-      //   email,
-      //   password,
-      // });
 
       localStorage.setItem("user", JSON.stringify(responseData.data.user));
-      dispatch(setAuth(true));
+      updateUser(responseData.data.user);
+
       toast.success(responseData.message, {
         position: "top-right",
         autoClose: 1500,
@@ -50,7 +45,7 @@ function Login() {
         navigate("/");
       }, 1500);
     } catch (error) {
-      toast.error("Registration failed. Please try again.", {
+      toast.error("Login failed. Please try again.", {
         position: "top-right",
         autoClose: 1500,
       });
@@ -58,12 +53,6 @@ function Login() {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    return () => {
-      setLoading(false);
-    };
-  }, []);
 
   return (
     <div className="login-form-container">

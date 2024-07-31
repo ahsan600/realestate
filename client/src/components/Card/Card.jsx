@@ -8,7 +8,7 @@ import save from "../../assets/save.png";
 import { Link } from "react-router-dom";
 function Card({ data }) {
   return (
-    <Link to={`/${data.id}`}>
+    <Link to={`${data.id}`}>
       <div className="card">
         <div className="imageContainer">
           <img src={data.img} alt="" />

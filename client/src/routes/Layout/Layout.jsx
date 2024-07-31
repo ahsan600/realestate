@@ -1,8 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import "./layout.scss";
 import Navbar from "../../components/Navbar/Navbar";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { AuthContext } from "../../components/Context/AuthContext";
 function Layout() {
   return (
     <div className="layout">
@@ -14,13 +15,15 @@ function Layout() {
   );
 }
 function RequiredAuth() {
-  const auth = useSelector((state) => state.auth.isAuthenticated);
-  console.log("lolo", auth);
+  const { currentUser } = useContext(AuthContext);
+  console.log(currentUser);
   const navigate = useNavigate();
-
   useEffect(() => {
-    if (!auth) return navigate("/");
+    if (!currentUser) {
+      navigate("/signin");
+    }
   }, []);
+
   return (
     <div className="layout">
       <Navbar />
@@ -30,4 +33,5 @@ function RequiredAuth() {
     </div>
   );
 }
+
 export { Layout, RequiredAuth };

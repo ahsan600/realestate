@@ -12,8 +12,8 @@ function ListPage() {
       <div className="listContainer">
         <div className="wrapper">
           <Fliter />
-          {data.map((item) => (
-            <Card data={item} />
+          {data.map((item, index) => (
+            <Card key={index} data={item} />
           ))}
         </div>
       </div>

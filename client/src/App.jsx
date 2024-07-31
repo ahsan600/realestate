@@ -6,33 +6,33 @@ import SinglePage from "./routes/SinglePage/SinglePage";
 import Profile from "./routes/Profile/Profile";
 import Register from "./routes/Register/Register";
 import Login from "./routes/Login/Login";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { setAuth } from "./redux/authSlice";
+import Page404 from "./routes/404Page/Page404";
+import UpdateProfile from "./routes/UpdateProfile/UpdateProfile";
 
 function App() {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    if (localStorage.getItem("user")) {
-      dispatch(setAuth(true));
-    }
-  }, []);
   const router = createBrowserRouter([
     {
       path: "/",
       element: <Layout />,
       children: [
         { path: "/", element: <HomePage /> },
-        { path: "/list", element: <ListPage /> },
-        { path: "/:id", element: <SinglePage /> },
-        { path: "/signin", element: <Login /> },
-        { path: "/signup", element: <Register /> },
+        { path: "list", element: <ListPage /> },
+        { path: "list/:id", element: <SinglePage /> },
+        { path: "signin", element: <Login /> },
+        { path: "signup", element: <Register /> },
       ],
     },
     {
-      path: "/",
+      path: "profile",
       element: <RequiredAuth />,
-      children: [{ path: "/profile", element: <Profile /> }],
+      children: [
+        { path: "", element: <Profile /> },
+        { path: "update-user", element: <UpdateProfile /> },
+      ],
+    },
+    {
+      path: "*",
+      element: <Page404 />,
     },
   ]);
 
