@@ -13,7 +13,7 @@ import { setAuth } from "./redux/authSlice";
 function App() {
   const dispatch = useDispatch();
   useEffect(() => {
-    if (localStorage.getItem("access-token")) {
+    if (localStorage.getItem("user")) {
       dispatch(setAuth(true));
     }
   }, []);

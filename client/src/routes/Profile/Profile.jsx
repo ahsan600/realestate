@@ -8,19 +8,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { setAuth } from "../../redux/authSlice";
 import { toast } from "react-toastify";
 import axios from "axios";
+import apiRequest from "../../lib/apiRequest";
 function Profile() {
-  const user = userData;
+  // const user = userData;
   const data = listData;
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth.isAuthenticated);
+  const userData = JSON.parse(localStorage.getItem("user"));
+  console.log(userData);
   const handleLogout = async () => {
-    const { data: responseData } = await axios.get("/api/auth/logout");
+    const { data: responseData } = await apiRequest.get("/api/auth/logout");
+    // axios.get("/api/auth/logout");
     toast.success(responseData.message, {
       position: "top-right",
       autoClose: 1000,
     });
-    localStorage.removeItem("access-token");
+    localStorage.removeItem("user");
     setTimeout(() => {
       dispatch(setAuth(false));
       navigate("/");
@@ -38,13 +42,13 @@ function Profile() {
           <div className="center">
             <div className="detail">
               <p>
-                Avatar: <img src={user.img} alt="" />
+                Avatar: <img src={userData.avatar} alt="" />
               </p>
               <p>
-                Username: <span>{user.name}</span>
+                Username: <span>{userData.username}</span>
               </p>
               <p>
-                Email: <span>ahsan@gmail.com</span>
+                Email: <span>{userData.email}</span>
               </p>
             </div>
             {auth && (

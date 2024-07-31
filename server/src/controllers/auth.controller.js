@@ -44,6 +44,7 @@ const register = asyncHandler(async (req, res) => {
 
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+  console.log();
   const user = await User.findOne({ email });
 
   if (user.length == 0) {
@@ -63,18 +64,15 @@ const login = asyncHandler(async (req, res) => {
     process.env.JWT_SECERT_KEY,
     { expiresIn: age }
   );
+  const { password: pass, ...userInfo } = user._doc;
+
   res
     .cookie("token", token, {
       httpOnly: true,
       maxAge: age,
     })
     .status(200)
-    .json(
-      new ApiResponse(200, "User Login Successfully", {
-        AcessToken: token,
-        user,
-      })
-    );
+    .json(new ApiResponse(200, "User Login Successfully", { user: userInfo }));
 });
 
 const logout = asyncHandler(async (req, res) => {

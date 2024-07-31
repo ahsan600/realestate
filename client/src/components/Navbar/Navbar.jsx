@@ -2,13 +2,11 @@ import { useEffect, useState } from "react";
 import "./navbar.scss";
 import logo from "../../assets/logo.png";
 import menu from "../../assets/menu.png";
-// import menu from "../../assets/menu.png";
 import { Link } from "react-router-dom";
-import { userData } from "../../lib/dummyData";
 import { useSelector } from "react-redux";
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const user = userData;
+  const userData = JSON.parse(localStorage.getItem("user"));
   const auth = useSelector((state) => state.auth.isAuthenticated);
   const navItems = [
     {
@@ -36,7 +34,7 @@ function Navbar() {
       slug: "/signup",
     },
   ];
-  console.log("navbar", auth);
+
   return (
     <nav>
       <div className="left">
@@ -65,8 +63,8 @@ function Navbar() {
         ) : (
           <>
             <div className="userImage">
-              <img src={user.img} alt="" />
-              <span>{user.name}</span>
+              <img src={userData.avatar} alt="" />
+              <span>{userData.username}</span>
             </div>
             <Link className="signOut" to="/profile">
               Profile

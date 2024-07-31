@@ -7,6 +7,7 @@ import loader from "../../assets/loader.gif";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setAuth } from "../../redux/authSlice";
+import apiRequest from "../../lib/apiRequest";
 
 function Login() {
   const {
@@ -29,16 +30,21 @@ function Login() {
     console.log(email, password);
 
     try {
-      const { data: responseData } = await axios.post("/api/auth/login", {
+      const { data: responseData } = await apiRequest.post("/api/auth/login", {
         email,
         password,
       });
+      // axios.post("/api/auth/login", {
+      //   email,
+      //   password,
+      // });
+
+      localStorage.setItem("user", JSON.stringify(responseData.data.user));
+      dispatch(setAuth(true));
       toast.success(responseData.message, {
         position: "top-right",
         autoClose: 1500,
       });
-      localStorage.setItem("access-token", responseData.data.AcessToken);
-      dispatch(setAuth(true));
       reset();
       setTimeout(() => {
         navigate("/");
@@ -121,6 +127,7 @@ function Login() {
           </div>
           <button
             type="submit"
+            disabled={loading}
             style={{ height: "50px" }}
             className="btn btn-primary"
           >

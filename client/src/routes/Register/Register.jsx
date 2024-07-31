@@ -5,6 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import loader from "../../assets/loader.gif";
 import { Link } from "react-router-dom";
+import apiRequest from "../../lib/apiRequest";
 function Register() {
   const {
     register,
@@ -32,23 +33,32 @@ function Register() {
     if (data.image.length > 0) {
       formData.append("avatar", data.image[0]);
     }
-
-    const { data: responseData } = await axios.post(
-      "/api/auth/register",
-      formData
-    );
-    setLoading(false);
-    toast.success(responseData.message, {
-      position: "top-right",
-      autoClose: 3000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: "light",
-    });
-    reset();
+    try {
+      const { data: responseData } = await apiRequest.post(
+        "/api/auth/register",
+        formData
+      );
+      // axios.post(
+      //   "/api/auth/register",
+      //   formData
+      // );
+      toast.success(responseData.message, {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    
+      reset();
+    }
   };
   useEffect(() => {
     return () => {
@@ -202,6 +212,7 @@ function Register() {
           </div>
           <button
             type="submit"
+            disabled={loading}
             style={{ height: "50px" }}
             className="btn btn-primary"
           >

@@ -55,7 +55,7 @@
           a {
             width: fit-content;
             padding: 8px 18px;
-            border-radius: 20px;
+            border-radius: 10px;
             @include sm {
               padding: 10px 10px;
               font-size: 14px;
@@ -63,7 +63,7 @@
           }
           .button {
             color: white;
-            background-color: red;
+            background-color: teal;
           }
         }
       
