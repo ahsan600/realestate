@@ -61,7 +61,7 @@ function Register() {
     };
   }, []);
   return (
-    <div className="form-container">
+    <div className="register form-container">
       <div className="form-content">
         <h3>Register</h3>
         <form onSubmit={handleSubmit(onSubmit)}>

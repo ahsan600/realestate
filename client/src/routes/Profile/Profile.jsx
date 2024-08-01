@@ -39,7 +39,7 @@ function Profile() {
         <div className="wrapper">
           <div className="row">
             <h2>User Information</h2>
-            <Link className="button">Update Profile</Link>
+            <Link to="update-user" className="button">Update Profile</Link>
           </div>
           <div className="center">
             <div className="detail">

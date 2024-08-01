@@ -16,7 +16,6 @@ function Login() {
     formState: { errors },
   } = useForm({ mode: "all" });
   const { updateUser } = useContext(AuthContext);
-  console.log(updateUser);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -34,7 +33,6 @@ function Login() {
       });
 
       localStorage.setItem("user", JSON.stringify(responseData.data.user));
-      updateUser(responseData.data.user);
 
       toast.success(responseData.message, {
         position: "top-right",
@@ -42,6 +40,7 @@ function Login() {
       });
       reset();
       setTimeout(() => {
+        updateUser(responseData.data.user);
         navigate("/");
       }, 1500);
     } catch (error) {

@@ -16,7 +16,6 @@ function Layout() {
 }
 function RequiredAuth() {
   const { currentUser } = useContext(AuthContext);
-  console.log(currentUser);
   const navigate = useNavigate();
   useEffect(() => {
     if (!currentUser) {
