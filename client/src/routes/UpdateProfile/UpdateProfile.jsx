@@ -31,6 +31,7 @@ function UpdateProfile() {
   const onSubmit = async (data) => {
     setLoading(true);
     const formData = new FormData();
+    formData.append("id", currentUser._id);
     formData.append("username", data.username);
     formData.append("email", data.email);
     formData.append("phoneno", data.ph_no);
@@ -54,7 +55,7 @@ function UpdateProfile() {
       console.log(responseData.data);
       setTimeout(() => {
         updateUser(responseData.data);
-        // navigate("/profile");
+        navigate("/profile");
       }, 1500);
     } catch (error) {
       console.log(error);

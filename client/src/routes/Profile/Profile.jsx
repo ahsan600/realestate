@@ -61,7 +61,7 @@ function Profile() {
           </div>
           <div className="row">
             <h2>My List</h2>
-            <Link className="button">Add New Post</Link>
+            <Link to="add-post" className="button">Add New Post</Link>
           </div>
           <div className="list">
             {data.map((item, index) => (

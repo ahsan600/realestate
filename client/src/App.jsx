@@ -8,6 +8,7 @@ import Register from "./routes/Register/Register";
 import Login from "./routes/Login/Login";
 import Page404 from "./routes/404Page/Page404";
 import UpdateProfile from "./routes/UpdateProfile/UpdateProfile";
+import NewPostPage from "./routes/NewPostPage/NewPostPage";
 
 function App() {
   const router = createBrowserRouter([
@@ -28,6 +29,7 @@ function App() {
       children: [
         { path: "", element: <Profile /> },
         { path: "update-user", element: <UpdateProfile /> },
+        { path: "add-post", element: <NewPostPage /> },
       ],
     },
     {
