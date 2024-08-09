@@ -56,7 +56,7 @@ const login = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Login Password Failed", "Invalid Credentials");
   }
   const age = 1000 * 60 * 60 * 24 * 7;
-
+  console.log(process.env.JWT_SECERT_KEY);
   const token = jwt.sign(
     {
       id: user.id,

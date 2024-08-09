@@ -31,7 +31,7 @@ function Login() {
         email,
         password,
       });
-
+      console.log(responseData);
       localStorage.setItem("user", JSON.stringify(responseData.data.user));
 
       toast.success(responseData.message, {
