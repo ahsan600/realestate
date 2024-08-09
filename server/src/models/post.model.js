@@ -7,11 +7,11 @@ const postSchema = new Schema(
     },
     address: { type: String, required: true },
     price: { type: String, required: true },
-    bedroom: { type: Number, required: true },
-    bathroom: { type: Number, required: true },
+    bedroom: { type: String, required: true },
+    bathroom: { type: String, required: true },
     images: [
       {
-        url: { type: String, required: true },
+        type: String,
       },
     ],
     owner: {

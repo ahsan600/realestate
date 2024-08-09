@@ -7,8 +7,8 @@ const postDetialSchema = new Schema(
     },
     desc: { type: String, required: true },
     utilities: { type: String, required: true },
-    pet: { type: Number, required: true },
-    income: { type: Number, required: true },
+    pet: { type: String, required: true },
+    income: { type: String, required: true },
     size: { type: String, required: true },
     school: {
       type: String,
@@ -18,7 +18,7 @@ const postDetialSchema = new Schema(
       type: String,
       required: true,
     },
-    Restaurant: {
+    restaurant: {
       type: String,
       required: true,
     },

@@ -7,38 +7,58 @@ import parse from "html-react-parser";
 
 function NewPostPage() {
   const [value, setValue] = useState("");
+  const [showImages, setShowImages] = useState([]);
+  const [uploadImages, setUploadImages] = useState([]);
+  function uploader(e) {
+    const imageFile = e.target.files[0];
+    const reader = new FileReader();
+    reader.addEventListener("load", (e) => {
+      setShowImages((pv) => [...pv, e.target.result]);
+    });
+
+    reader.readAsDataURL(imageFile);
+  }
+  const handleImages = (e) => {
+    setUploadImages((pv) => [...pv, e.target.files[0]]);
+    uploader(e);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const { props } = parse(value);
+    if (value.trim() !== "") {
+      var { props } = parse(value);
+      console.log(props);
+    }
     const inputs = Object.fromEntries(formData);
 
     try {
-      const data = {
-        postData: {
-          title: inputs.title,
-          price: parseInt(inputs.price),
-          address: inputs.address,
-          city: inputs.city,
-          bedroom: parseInt(inputs.bedroom),
-          bathroom: parseInt(inputs.bathroom),
-          type: inputs.type,
-          property: inputs.property,
-          latitude: inputs.latitude,
-          longitude: inputs.longitude,
-        },
-        postDetail: {
-          desc: props.children,
-          utilities: inputs.utilities,
-          pet: inputs.pet,
-          income: inputs.income,
-          size: parseInt(inputs.size),
-          school: parseInt(inputs.school),
-          bus: parseInt(inputs.bus),
-          restaurant: parseInt(inputs.restaurant),
-        },
-      };
-      const res = await PostServices.createPost(data);
+      formData.append("postData[title]", inputs.title);
+      formData.append("postData[price]", parseInt(inputs.price));
+      formData.append("postData[address]", inputs.address);
+      formData.append("postData[city]", inputs.city);
+      formData.append("postData[bedroom]", parseInt(inputs.bedroom));
+      formData.append("postData[bathroom]", parseInt(inputs.bathroom));
+      formData.append("postData[type]", inputs.type);
+      formData.append("postData[property]", inputs.property);
+      formData.append("postData[latitude]", inputs.latitude);
+      formData.append("postData[longitude]", inputs.longitude);
+
+      // Append multiple images
+      uploadImages.forEach((image, index) => {
+        formData.append(`postData[images]`, image);
+      });
+
+      // Append postDetail data
+      formData.append("postDetail[desc]", props?.children || "");
+      formData.append("postDetail[utilities]", inputs.utilities);
+      formData.append("postDetail[pet]", inputs.pet);
+      formData.append("postDetail[income]", inputs.income);
+      formData.append("postDetail[size]", parseInt(inputs.size));
+      formData.append("postDetail[school]", parseInt(inputs.school));
+      formData.append("postDetail[bus]", parseInt(inputs.bus));
+      formData.append("postDetail[restaurant]", parseInt(inputs.restaurant));
+
+      const res = await PostServices.createPost(formData);
       // navigate("/" + res.data.id);
     } catch (err) {
       console.log(err);
@@ -89,19 +109,19 @@ function NewPostPage() {
             <div className="item">
               <label htmlFor="type">Type</label>
               <select name="type">
-                <option value="rent" defaultChecked>
+                <option value="Rent" defaultChecked>
                   Rent
                 </option>
-                <option value="buy">Buy</option>
+                <option value="Buy">Buy</option>
               </select>
             </div>
             <div className="item">
               <label htmlFor="type">Property</label>
               <select name="property">
-                <option value="apartment">Apartment</option>
-                <option value="house">House</option>
-                <option value="condo">Condo</option>
-                <option value="land">Land</option>
+                <option value="Apartment">Apartment</option>
+                <option value="House">House</option>
+                <option value="Condo">Condo</option>
+                <option value="Land">Land</option>
               </select>
             </div>
 
@@ -149,7 +169,19 @@ function NewPostPage() {
           </form>
         </div>
       </div>
-      <div className="sideContainer"></div>
+      <div className="leftContainer">
+        <div className="wrapper">
+          <div className="update-img">
+            {showImages.map((image) => (
+              <img src={image} />
+            ))}
+          </div>
+          <label htmlFor="file-upload" className="custom-file-upload">
+            Upload Image
+          </label>
+          <input id="file-upload" type="file" onChange={handleImages} />
+        </div>
+      </div>
     </div>
   );
 }

@@ -8,7 +8,6 @@ import { uploadImage } from "../utils/cloudinary.js";
 
 const register = asyncHandler(async (req, res) => {
   const { username, email, password, phoneno } = req.body;
-  console.log(req.body);
   if (
     [username, email, password, phoneno].some((field) => field.trim() === "")
   ) {
