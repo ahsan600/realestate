@@ -7,6 +7,7 @@ import Chat from "../../components/Chat/Chat";
 import { toast } from "react-toastify";
 import apiRequest from "../../lib/apiRequest";
 import { AuthContext } from "../../components/Context/AuthContext";
+import AuthServices from "../../services/AuthServices";
 
 function Profile() {
   const data = listData;
@@ -14,8 +15,8 @@ function Profile() {
   const { currentUser, updateUser } = useContext(AuthContext);
   const handleLogout = async () => {
     try {
-      const { data: responseData } = await apiRequest.get("/api/auth/logout");
-      toast.success(responseData.message, {
+      const response = await AuthServices.logout();
+      toast.success(response.message, {
         position: "top-right",
         autoClose: 1000,
       });
@@ -39,7 +40,9 @@ function Profile() {
         <div className="wrapper">
           <div className="row">
             <h2>User Information</h2>
-            <Link to="update-user" className="button">Update Profile</Link>
+            <Link to="update-user" className="button">
+              Update Profile
+            </Link>
           </div>
           <div className="center">
             <div className="detail">
@@ -61,7 +64,9 @@ function Profile() {
           </div>
           <div className="row">
             <h2>My List</h2>
-            <Link to="add-post" className="button">Add New Post</Link>
+            <Link to="add-post" className="button">
+              Add New Post
+            </Link>
           </div>
           <div className="list">
             {data.map((item, index) => (

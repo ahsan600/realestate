@@ -44,7 +44,6 @@ const register = asyncHandler(async (req, res) => {
 
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  console.log();
   const user = await User.findOne({ email });
 
   if (user.length == 0) {

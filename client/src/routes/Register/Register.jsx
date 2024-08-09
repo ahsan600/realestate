@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import loader from "../../assets/loader.gif";
 import { Link } from "react-router-dom";
 import apiRequest from "../../lib/apiRequest";
+import AuthServices from "../../services/AuthServices";
 function Register() {
   const {
     register,
@@ -33,11 +34,8 @@ function Register() {
       formData.append("avatar", data.image[0]);
     }
     try {
-      const { data: responseData } = await apiRequest.post(
-        "/api/auth/register",
-        formData
-      );
-      toast.success(responseData.message, {
+      const response = await AuthServices.signin(formData);
+      toast.success(response.message, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,

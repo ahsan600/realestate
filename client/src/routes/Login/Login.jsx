@@ -7,6 +7,7 @@ import loader from "../../assets/loader.gif";
 import { Link, useNavigate } from "react-router-dom";
 import apiRequest from "../../lib/apiRequest";
 import { AuthContext } from "../../components/Context/AuthContext.jsx";
+import AuthServices from "../../services/AuthServices.js";
 
 function Login() {
   const {
@@ -24,23 +25,19 @@ function Login() {
 
   const onSubmit = async (data) => {
     setLoading(true);
-    const { email, password } = data;
 
     try {
-      const { data: responseData } = await apiRequest.post("/api/auth/login", {
-        email,
-        password,
-      });
-      console.log(responseData);
-      localStorage.setItem("user", JSON.stringify(responseData.data.user));
+      const response = await AuthServices.login(data);
 
-      toast.success(responseData.message, {
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+
+      toast.success(response.message, {
         position: "top-right",
         autoClose: 1500,
       });
       reset();
       setTimeout(() => {
-        updateUser(responseData.data.user);
+        updateUser(response.data.user);
         navigate("/");
       }, 1500);
     } catch (error) {
