@@ -10,6 +10,5 @@ const verifyJWT = async (req, res, next) => {
 
   req.user = decodeToken.id;
     next();
-//   console.log(req.user);
 };
 export { verifyJWT };

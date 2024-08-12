@@ -9,7 +9,6 @@ const createPost = asyncHandler(async (req, res) => {
   const { postData, postDetail } = req.body;
   const userId = req.user;
   const localPostsPath = req.files;
-
   if (localPostsPath.length === 0) {
     throw new ApiError(401, "Post Images is Required");
   }
@@ -28,13 +27,41 @@ const createPost = asyncHandler(async (req, res) => {
     images: cloudinaryUrls,
     owner: userId,
   });
-  console.log(postDataInsert, postDetail);
-  const postDetailsInsert = await PostDetial.create({
+
+  const singlePostDetail = await PostDetial.create({
     ...postDetail,
     postId: postDataInsert.id,
   });
 
-  res.status(200).json(new ApiResponse(200, "Posts is Created Working"));
+  res
+    .status(200)
+    .json(new ApiResponse(200, "Posts is Created Working", postDataInsert.id));
 });
-
-export { createPost };
+const getPost = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  console.log(id);
+  const getSinglePost = await PostDetial.aggregate([
+    {
+      $lookup: {
+        from: "postdetials",
+        localField: "_id",
+        foreignField: "postId",
+        as: "SinglePostData",
+      },
+    },
+    {
+      $addFields: {
+        SinglePostData: { $arrayElemAt: ["$SinglePostData", 0] },
+      },
+    },
+    {
+      $replaceRoot: {
+        newRoot: {
+          $mergeObjects: ["$$ROOT", "$SinglePostData"],
+        },
+      },
+    },
+  ]);
+  console.log(getSinglePost);
+});
+export { createPost, getPost };

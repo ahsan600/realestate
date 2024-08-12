@@ -4,11 +4,13 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import PostServices from "../../services/PostServices";
 import parse from "html-react-parser";
+import { useNavigate } from "react-router-dom";
 
 function NewPostPage() {
   const [value, setValue] = useState("");
   const [showImages, setShowImages] = useState([]);
   const [uploadImages, setUploadImages] = useState([]);
+  const navigate = useNavigate();
   function uploader(e) {
     const imageFile = e.target.files[0];
     const reader = new FileReader();
@@ -23,6 +25,7 @@ function NewPostPage() {
     uploader(e);
   };
   const handleSubmit = async (e) => {
+    console.log("hi");
     e.preventDefault();
     const formData = new FormData(e.target);
     if (value.trim() !== "") {
@@ -58,8 +61,9 @@ function NewPostPage() {
       formData.append("postDetail[bus]", parseInt(inputs.bus));
       formData.append("postDetail[restaurant]", parseInt(inputs.restaurant));
 
-      const res = await PostServices.createPost(formData);
-      // navigate("/" + res.data.id);
+      const data = await PostServices.createPost(formData);
+      // console.log()
+      navigate("/list/" + data.id);
     } catch (err) {
       console.log(err);
     }
