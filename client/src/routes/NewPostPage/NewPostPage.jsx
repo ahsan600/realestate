@@ -25,7 +25,6 @@ function NewPostPage() {
     uploader(e);
   };
   const handleSubmit = async (e) => {
-    console.log("hi");
     e.preventDefault();
     const formData = new FormData(e.target);
     if (value.trim() !== "") {
@@ -45,13 +44,9 @@ function NewPostPage() {
       formData.append("postData[property]", inputs.property);
       formData.append("postData[latitude]", inputs.latitude);
       formData.append("postData[longitude]", inputs.longitude);
-
-      // Append multiple images
       uploadImages.forEach((image, index) => {
         formData.append(`postData[images]`, image);
       });
-
-      // Append postDetail data
       formData.append("postDetail[desc]", props?.children || "");
       formData.append("postDetail[utilities]", inputs.utilities);
       formData.append("postDetail[pet]", inputs.pet);
@@ -61,9 +56,8 @@ function NewPostPage() {
       formData.append("postDetail[bus]", parseInt(inputs.bus));
       formData.append("postDetail[restaurant]", parseInt(inputs.restaurant));
 
-      const data = await PostServices.createPost(formData);
-      // console.log()
-      navigate("/list/" + data.id);
+      const id = await PostServices.createPost(formData);
+      navigate("/list/" + id);
     } catch (err) {
       console.log(err);
     }

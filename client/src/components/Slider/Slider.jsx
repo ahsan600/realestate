@@ -43,21 +43,27 @@ function Slider({ images }) {
         </div>
       )}
       <div className="bigImage">
-        <img src={images[0]} alt="" onClick={() => openSliderImage(true)} />
+        <img
+          src={images && images[0]}
+          alt=""
+          onClick={() => openSliderImage(true)}
+        />
       </div>
-      <div className="smallImage">
-        {images.slice(1).map((image, index) => (
-          <img
-            key={index}
-            src={image}
-            alt=""
-            onClick={() => {
-              sliderChange(index + 1);
-              openSliderImage(true);
-            }}
-          />
-        ))}
-      </div>
+      {images.length !== 1 && (
+        <div className="smallImage">
+          {images?.slice(1)?.map((image, index) => (
+            <img
+              key={index}
+              src={image}
+              alt=""
+              onClick={() => {
+                sliderChange(index + 1);
+                openSliderImage(true);
+              }}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

@@ -1,6 +1,5 @@
-import React from "react";
-import "./singlepage.scss";
-import { singlePostData, userData } from "../../lib/dummyData";
+import React, { useEffect, useState } from "react";
+import "./singlepage.scss"; 
 import utility from "../../assets/utility.png";
 import pet from "../../assets/pet.png";
 import fee from "../../assets/fee.png";
@@ -15,8 +14,40 @@ import pin from "../../assets/pin.png";
 import save from "../../assets/save.png";
 import Map from "../../components/Map/Map";
 import Slider from "../../components/Slider/Slider";
+import PostServices from "../../services/PostServices";
+import { useNavigate, useParams } from "react-router-dom";
+import UserServices from "../../services/UserServices";
+
 function SinglePage() {
-  const singlePageData = singlePostData;
+  const [singlePageData, setSinglePageData] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const fetchPost = async () => {
+    try {
+      const postResponse = await PostServices.getSinglePost(id);
+      console.log(postResponse);
+      if (!postResponse) {
+        navigate("/list");
+        return;
+      }
+      const userData = await UserServices.getUser(postResponse.owner);
+      setUserData(userData);
+      setSinglePageData(postResponse);
+    } catch (error) {
+      console.error("Failed to fetch post data:", error);
+      navigate("/list");
+    }
+  };
+
+  useEffect(() => {
+    fetchPost();
+  }, [id]);
+  console.log(userData)
+  if (!singlePageData) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="singlepage">
@@ -30,20 +61,20 @@ function SinglePage() {
               <h1>{singlePageData.title}</h1>
               <div className="address">
                 <p>
-                  <img src={pin} alt="" />
+                  <img src={pin} alt="Pin" />
                   {singlePageData.address}
                 </p>
               </div>
               <span>${singlePageData.price}</span>
             </div>
             <div className="info-right">
-              <img src={userData.img} alt="" />
+              <img src={userData.avatar} alt={userData.name} />
               <br />
-              <span>{userData.name}</span>
+              <span>{userData.username}</span>
             </div>
           </div>
           <div className="bottom">
-            <p>{singlePageData.description}</p>
+            <p>{singlePageData.desc}</p>
           </div>
         </div>
       </div>
@@ -55,31 +86,38 @@ function SinglePage() {
           <div className="general">
             <div className="item">
               <div className="icon">
-                <img src={utility} alt="" />
+                <img src={utility} alt="Utilities" />
               </div>
               <div className="text">
                 <b>Utilities</b>
-                <p>Render is responsible</p>
+                <p style={{ textTransform: "capitalize" }}>
+                  {singlePageData.utilities === "shared"
+                    ? "Shared"
+                    : singlePageData.utilities}{" "}
+                  is responsible
+                </p>
               </div>
             </div>
             <div className="item">
               <div className="icon">
-                <img src={pet} alt="" />
+                <img src={pet} alt="Pet Policy" />
               </div>
-
               <div className="text">
                 <b>Pet Policy</b>
-                <p>Pets Allowed</p>
+                <p style={{ textTransform: "capitalize" }}>
+                  Pets {singlePageData.pet}
+                </p>
               </div>
             </div>
             <div className="item">
               <div className="icon">
-                <img src={fee} alt="" />
+                <img src={fee} alt="Property Fees" />
               </div>
-
               <div className="text">
                 <b>Property Fees</b>
-                <p>Must have 3x the rent in total household income</p>
+                <p style={{ textTransform: "capitalize" }}>
+                  {singlePageData.income}
+                </p>
               </div>
             </div>
           </div>
@@ -89,7 +127,7 @@ function SinglePage() {
           <div className="roomsize">
             <div className="item">
               <div className="icon">
-                <img src={size} alt="" />
+                <img src={size} alt="Room Size" />
               </div>
               <div className="text">
                 <span>80sqm ({singlePageData.size}sqft)</span>
@@ -97,18 +135,16 @@ function SinglePage() {
             </div>
             <div className="item">
               <div className="icon">
-                <img src={bed} alt="" />
+                <img src={bed} alt="Bedrooms" />
               </div>
-
               <div className="text">
                 <span>{singlePageData.bedroom} bedrooms</span>
               </div>
             </div>
             <div className="item">
               <div className="icon">
-                <img src={bath} alt="" />
+                <img src={bath} alt="Bathrooms" />
               </div>
-
               <div className="text">
                 <span>{singlePageData.bathroom} bathrooms</span>
               </div>
@@ -120,31 +156,29 @@ function SinglePage() {
           <div className="nearbyplaces">
             <div className="item">
               <div className="icon">
-                <img src={school} alt="" />
+                <img src={school} alt="School" />
               </div>
               <div className="text">
                 <b>School</b>
-                <p>{singlePageData.school}</p>
+                <p>{singlePageData.school}m away</p>
               </div>
             </div>
             <div className="item">
               <div className="icon">
-                <img src={bus} alt="" />
+                <img src={bus} alt="Bus Stop" />
               </div>
-
               <div className="text">
                 <b>Bus Stop</b>
-                <p>{singlePageData.bus}</p>
+                <p>{singlePageData.bus}m away</p>
               </div>
             </div>
             <div className="item">
               <div className="icon">
-                <img src={restaurant} alt="" />
+                <img src={restaurant} alt="Restaurant" />
               </div>
-
               <div className="text">
                 <b>Restaurant</b>
-                <p>{singlePageData.restaurant}</p>
+                <p>{singlePageData.restaurant}m away</p>
               </div>
             </div>
           </div>
@@ -152,15 +186,15 @@ function SinglePage() {
             <span> Location</span>
           </div>
           <div className="mapContainer">
-            <Map items={[singlePostData]} />
+            <Map items={[singlePageData]} />
           </div>
           <div className="buttons">
             <button>
-              <img src={chat} alt="" />
+              <img src={chat} alt="Chat" />
               Send a Message
             </button>
             <button>
-              <img src={save} alt="" />
+              <img src={save} alt="Save" />
               Save the Place
             </button>
           </div>

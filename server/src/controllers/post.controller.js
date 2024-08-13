@@ -1,10 +1,10 @@
+import mongoose from "mongoose";
 import { Post } from "../models/post.model.js";
 import { PostDetial } from "../models/postDetail.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiRespone.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadImage } from "../utils/cloudinary.js";
-
 const createPost = asyncHandler(async (req, res) => {
   const { postData, postDetail } = req.body;
   const userId = req.user;
@@ -35,12 +35,30 @@ const createPost = asyncHandler(async (req, res) => {
 
   res
     .status(200)
-    .json(new ApiResponse(200, "Posts is Created Working", postDataInsert.id));
+    .json(new ApiResponse(200, "Posts is Created Working", postDataInsert._id));
+});
+const getAllUserPosts = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const getUserPosts = await Post.aggregate([
+    {
+      $match: {
+        owner: new mongoose.Types.ObjectId(userId),
+      },
+    },
+  ]);
+  if (!getUserPosts) {
+    return res.status(401).json(new ApiError(401, "", "Posts Not Found"));
+  }
+  res.status(200).json(new ApiResponse(200, "SinglePost", getUserPosts));
 });
 const getPost = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  console.log(id);
-  const getSinglePost = await PostDetial.aggregate([
+  const [getSinglePost] = await Post.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(id),
+      },
+    },
     {
       $lookup: {
         from: "postdetials",
@@ -61,7 +79,22 @@ const getPost = asyncHandler(async (req, res) => {
         },
       },
     },
+    {
+      $addFields: {
+        id: "$postId",
+      },
+    },
+    {
+      $project: {
+        SinglePostData: 0,
+        _id: 0,
+        postId: 0,
+      },
+    },
   ]);
-  console.log(getSinglePost);
+  if (!getSinglePost) {
+    return res.status(401).json(new ApiError(401, "", "Post Not Found"));
+  }
+  res.status(200).json(new ApiResponse(200, "SinglePost", getSinglePost));
 });
-export { createPost, getPost };
+export { createPost, getAllUserPosts, getPost };

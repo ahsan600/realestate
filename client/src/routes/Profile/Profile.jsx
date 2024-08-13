@@ -1,18 +1,17 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./profile.scss";
 import { Link, useNavigate } from "react-router-dom";
-import { listData } from "../../lib/dummyData";
 import Card from "../../components/Card/Card";
 import Chat from "../../components/Chat/Chat";
 import { toast } from "react-toastify";
-import apiRequest from "../../lib/apiRequest";
 import { AuthContext } from "../../components/Context/AuthContext";
 import AuthServices from "../../services/AuthServices";
+import PostServices from "../../services/PostServices";
 
 function Profile() {
-  const data = listData;
-  const navigate = useNavigate();
+  const [userPosts, setUserPosts] = useState(null);
   const { currentUser, updateUser } = useContext(AuthContext);
+  const navigate = useNavigate();
   const handleLogout = async () => {
     try {
       const response = await AuthServices.logout();
@@ -24,6 +23,7 @@ function Profile() {
 
       setTimeout(() => {
         updateUser(null);
+        userPosts(null);
         navigate("/");
       }, 1500);
     } catch (error) {
@@ -33,7 +33,18 @@ function Profile() {
       });
     }
   };
-
+  const fetchUserPosts = async () => {
+    try {
+      const posts = await PostServices.getUserPosts(currentUser._id);
+      setUserPosts(posts);
+    } catch (error) {}
+  };
+  useEffect(() => {
+    fetchUserPosts();
+  }, [currentUser]);
+  const handlePostDelete = (id) => {
+    console.log(id);
+  };
   return (
     <div className="profile">
       <div className="leftContainer">
@@ -68,10 +79,22 @@ function Profile() {
               Add New Post
             </Link>
           </div>
+
           <div className="list">
-            {data.map((item, index) => (
-              <Card key={index} data={item} />
-            ))}
+            {userPosts?.length == 0 ? (
+              <h1 style={{ textAlign: "center" }}>
+                There is no Posts Available
+              </h1>
+            ) : (
+              userPosts?.map((item, index) => (
+                <Card
+                  key={index}
+                  data={item}
+                  userPost="true"
+                  deletePost={handlePostDelete}
+                />
+              ))
+            )}
           </div>
         </div>
       </div>

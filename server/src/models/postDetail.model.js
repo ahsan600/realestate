@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import aggregatePaginate from "mongoose-aggregate-paginate-v2";
 const postDetialSchema = new Schema(
   {
     postId: {
@@ -25,5 +26,6 @@ const postDetialSchema = new Schema(
   },
   { timestamps: true }
 );
+postDetialSchema.plugin(aggregatePaginate);
 const PostDetial = mongoose.model("PostDetial", postDetialSchema);
 export { PostDetial };

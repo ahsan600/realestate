@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import aggregatePaginate from "mongoose-aggregate-paginate-v2";
 const postSchema = new Schema(
   {
     title: {
@@ -26,6 +27,10 @@ const postSchema = new Schema(
       type: String,
       required: true,
     },
+    city: {
+      type: String,
+      required: true,
+    },
     type: {
       type: String,
       enum: ["Buy", "Rent"],
@@ -37,5 +42,6 @@ const postSchema = new Schema(
   },
   { timestamps: true }
 );
+postSchema.plugin(aggregatePaginate);
 const Post = mongoose.model("Post", postSchema);
 export { Post };
