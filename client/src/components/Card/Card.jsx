@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./card.scss";
 import bed from "../../assets/bed.png";
 import bath from "../../assets/bath.png";
@@ -6,10 +6,16 @@ import pin from "../../assets/pin.png";
 import chat from "../../assets/chat.png";
 import save from "../../assets/save.png";
 import { Link, useNavigate } from "react-router-dom";
+import { PostContext } from "../Context/PostContext";
 function Card({ data, userPost = "false", deletePost = "" }) {
   const navigate = useNavigate();
+  const {updateSinglePost} = useContext(PostContext);
   const handleRoute = () => {
     navigate("/list/" + data._id);
+  };
+  const updatePost = (data) => {
+    updateSinglePost(data);
+    navigate("/profile/add-post");
   };
   return (
     <div className="card" onClick={handleRoute}>
@@ -23,13 +29,23 @@ function Card({ data, userPost = "false", deletePost = "" }) {
         >
           {data?.title}
           {userPost === "true" && (
-            <i
-              className="fa-solid fa-trash"
-              onClick={(e) => {
-                e.stopPropagation();
-                deletePost(data._id);
-              }}
-            ></i>
+            <div>
+              <i
+                className="fa-solid fa-edit"
+                style={{ marginRight: "10px" }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  updatePost(data);
+                }}
+              ></i>
+              <i
+                className="fa-solid fa-trash"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deletePost(data._id);
+                }}
+              ></i>
+            </div>
           )}
         </h1>
         <div className="adress">

@@ -52,7 +52,6 @@ function UpdateProfile() {
         progress: undefined,
         theme: "light",
       });
-      console.log(responseData.data);
       setTimeout(() => {
         updateUser(responseData.data);
         navigate("/profile");

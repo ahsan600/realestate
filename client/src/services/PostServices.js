@@ -13,6 +13,22 @@ class PostServices {
       console.log(error);
     }
   }
+  async updatePost(id, data) {
+    try {
+      const response = await apiRequest.post(
+        "/api/posts/update-post/" + id,
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async getSinglePost(id) {
     try {
       const response = await apiRequest.get("/api/posts/get-post/" + id);
@@ -31,8 +47,8 @@ class PostServices {
   }
   async deleteUserPost(id) {
     try {
-      const response = await apiRequest.get("/api/posts/delete-post/" + id);
-      return response.data.data;
+      const response = await apiRequest.delete("/api/posts/delete-post/" + id);
+      return response.data;
     } catch (error) {
       console.log(error);
     }

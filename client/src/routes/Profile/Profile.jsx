@@ -42,8 +42,11 @@ function Profile() {
   useEffect(() => {
     fetchUserPosts();
   }, [currentUser]);
-  const handlePostDelete = (id) => {
-    console.log(id);
+  const handlePostDelete = async (id) => {
+    const { success } = await PostServices.deleteUserPost(id);
+    if (success === true) {
+      fetchUserPosts();
+    }
   };
   return (
     <div className="profile">

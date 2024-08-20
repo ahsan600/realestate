@@ -4,7 +4,7 @@ import { userData } from "../../lib/dummyData";
 import cross from "../../assets/cross.png";
 function Chat() {
   const user = userData;
-  const [chat, setChat] = useState(true);
+  const [chat, setChat] = useState(false);
   return (
     <div className="chat">
       <h1>Message</h1>

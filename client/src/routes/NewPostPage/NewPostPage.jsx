@@ -1,15 +1,18 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import "./newpostpage.scss";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import PostServices from "../../services/PostServices";
 import parse from "html-react-parser";
 import { useNavigate } from "react-router-dom";
+import { PostContext } from "../../components/Context/PostContext";
 
 function NewPostPage() {
   const [value, setValue] = useState("");
   const [showImages, setShowImages] = useState([]);
   const [uploadImages, setUploadImages] = useState([]);
+  const { updatePost } = useContext(PostContext);
+
   const navigate = useNavigate();
   function uploader(e) {
     const imageFile = e.target.files[0];
@@ -29,7 +32,6 @@ function NewPostPage() {
     const formData = new FormData(e.target);
     if (value.trim() !== "") {
       var { props } = parse(value);
-      console.log(props);
     }
     const inputs = Object.fromEntries(formData);
 
@@ -44,7 +46,7 @@ function NewPostPage() {
       formData.append("postData[property]", inputs.property);
       formData.append("postData[latitude]", inputs.latitude);
       formData.append("postData[longitude]", inputs.longitude);
-      uploadImages.forEach((image, index) => {
+      uploadImages.forEach((image) => {
         formData.append(`postData[images]`, image);
       });
       formData.append("postDetail[desc]", props?.children || "");

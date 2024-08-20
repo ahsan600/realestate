@@ -28,7 +28,7 @@ const createPost = asyncHandler(async (req, res) => {
     owner: userId,
   });
 
-  const singlePostDetail = await PostDetial.create({
+  await PostDetial.create({
     ...postDetail,
     postId: postDataInsert.id,
   });
@@ -97,4 +97,69 @@ const getPost = asyncHandler(async (req, res) => {
   }
   res.status(200).json(new ApiResponse(200, "SinglePost", getSinglePost));
 });
-export { createPost, getAllUserPosts, getPost };
+const deleteUserPost = asyncHandler(async (req, res) => {
+  const { postId } = req.params;
+  const post = await Post.findById(postId);
+  if (!post) {
+    return res.status(401).json(new ApiError(401, "", "Post Not Found"));
+  }
+  await Post.findByIdAndDelete(postId);
+  await PostDetial.deleteOne({ postId });
+  res.status(200).json(new ApiResponse(200, "Post is Delete", deleteUserPost));
+});
+const updateUserPost = asyncHandler(async (req, res) => {
+  const { postData, postDetail } = req.body;
+  const { postId } = req.params;
+  if (req.flies.length > 0) {
+    const localPostsPath = req.files;
+    if (localPostsPath.length === 0) {
+      throw new ApiError(401, "Post Images is Required");
+    }
+
+    const cloudinaryUrls = await Promise.all(
+      localPostsPath.map(
+        async (localPostPath) => await uploadImage(localPostPath.path)
+      )
+    );
+    if (cloudinaryUrls.length === 0) {
+      throw new ApiError(401, "Post Images is not Uploaded to Cloudinary");
+    }
+
+    await Post.findByIdAndUpdate(
+      { _id: postId },
+      {
+        ...postData,
+        images: cloudinaryUrls,
+      }
+    );
+    await PostDetial.findByIdAndUpdate({ postId }, { ...postDetail });
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          "Posts is Updated Successfully",
+          postDataInsert._id
+        )
+      );
+  } else {
+    await Post.findByIdAndUpdate(
+      { _id: postId },
+      {
+        ...postData,
+      }
+    );
+    await PostDetial.findByIdAndUpdate({ postId }, { ...postDetail });
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          "Posts is Updated Successfully",
+          postDataInsert._id
+        )
+      );
+  }
+});
+export { createPost, getAllUserPosts, getPost, deleteUserPost, updateUserPost };

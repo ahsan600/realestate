@@ -27,7 +27,6 @@ function SinglePage() {
   const fetchPost = async () => {
     try {
       const postResponse = await PostServices.getSinglePost(id);
-      console.log(postResponse);
       if (!postResponse) {
         navigate("/list");
         return;
@@ -44,7 +43,6 @@ function SinglePage() {
   useEffect(() => {
     fetchPost();
   }, [id]);
-  console.log(userData)
   if (!singlePageData) {
     return <div>Loading...</div>;
   }

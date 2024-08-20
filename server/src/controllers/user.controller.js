@@ -6,7 +6,6 @@ import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 const updateUser = asyncHandler(async (req, res) => {
   const { id, password, avatar, ...userInfo } = req.body;
-  console.log(req.user, id);
   if (req.user !== id) {
     return res.status(404).json(new ApiError(401, "Invaild Credinatal"));
   }
