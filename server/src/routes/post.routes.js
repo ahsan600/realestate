@@ -4,6 +4,7 @@ const router = express.Router();
 import {
   createPost,
   deleteUserPost,
+  getAllPosts,
   getAllUserPosts,
   getPost,
   updateUserPost,
@@ -16,6 +17,7 @@ router
   .post(verifyJWT, upload.array("postData[images]"), createPost);
 router.route("/get-post/:id").get(verifyJWT, getPost);
 router.route("/get-posts/:userId").get(verifyJWT, getAllUserPosts);
+router.route("/get-list-posts").get(verifyJWT, getAllPosts);
 router.route("/delete-post/:postId").delete(verifyJWT, deleteUserPost);
 router
   .route("/update-post/:postId")

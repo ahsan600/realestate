@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./singlepage.scss"; 
+import "./singlepage.scss";
 import utility from "../../assets/utility.png";
 import pet from "../../assets/pet.png";
 import fee from "../../assets/fee.png";

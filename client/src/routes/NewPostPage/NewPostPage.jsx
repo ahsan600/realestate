@@ -1,18 +1,18 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./newpostpage.scss";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import PostServices from "../../services/PostServices";
 import parse from "html-react-parser";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { PostContext } from "../../components/Context/PostContext";
 
 function NewPostPage() {
+  const [updatePost, setUpadatePost] = useState(null);
   const [value, setValue] = useState("");
   const [showImages, setShowImages] = useState([]);
   const [uploadImages, setUploadImages] = useState([]);
-  const { updatePost } = useContext(PostContext);
-
+  const { postId } = useParams();
   const navigate = useNavigate();
   function uploader(e) {
     const imageFile = e.target.files[0];
@@ -23,6 +23,26 @@ function NewPostPage() {
 
     reader.readAsDataURL(imageFile);
   }
+  useEffect(() => {
+    if (postId) {
+      (async () => {
+        try {
+          const postResponse = await PostServices.getSinglePost(postId);
+          if (!postResponse) {
+            navigate("/profile");
+            return;
+          }
+          setUploadImages(postResponse.images)
+          setShowImages(postResponse.images);
+          setValue(postResponse.desc);
+          setUpadatePost(postResponse);
+        } catch (error) {
+          console.error("Failed to fetch post data:", error);
+          navigate("/profile");
+        }
+      })();
+    }
+  }, [postId]);
   const handleImages = (e) => {
     setUploadImages((pv) => [...pv, e.target.files[0]]);
     uploader(e);
@@ -58,8 +78,13 @@ function NewPostPage() {
       formData.append("postDetail[bus]", parseInt(inputs.bus));
       formData.append("postDetail[restaurant]", parseInt(inputs.restaurant));
 
-      const id = await PostServices.createPost(formData);
-      navigate("/list/" + id);
+      if (updatePost) {
+        await PostServices.updatePost(postId, formData);
+        navigate("/profile");
+      } else {
+        const id = await PostServices.createPost(formData);
+        navigate("/list/" + id);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -72,43 +97,90 @@ function NewPostPage() {
           <form onSubmit={handleSubmit}>
             <div className="item">
               <label htmlFor="title">Title</label>
-              <input id="title" name="title" type="text" />
+              <input
+                defaultValue={updatePost && updatePost.title}
+                id="title"
+                name="title"
+                type="text"
+              />
             </div>
             <div className="item">
               <label htmlFor="price">Price</label>
-              <input id="price" name="price" type="number" />
+              <input
+                defaultValue={updatePost && updatePost.price}
+                id="price"
+                name="price"
+                type="number"
+              />
             </div>
             <div className="item">
               <label htmlFor="address">Address</label>
-              <input id="address" name="address" type="text" />
+              <input
+                defaultValue={updatePost && updatePost.address}
+                id="address"
+                name="address"
+                type="text"
+              />
             </div>
             <div className="item description">
               <label htmlFor="desc">Description</label>
-              <ReactQuill theme="snow" value={value} onChange={setValue} />
+              <ReactQuill
+                theme="snow"
+                defaultValue={updatePost && updatePost.desc}
+                value={value}
+                onChange={setValue}
+              />
             </div>
             <div className="item">
               <label htmlFor="city">City</label>
-              <input id="city" name="city" type="text" />
+              <input
+                defaultValue={updatePost && updatePost.city}
+                id="city"
+                name="city"
+                type="text"
+              />
             </div>
             <div className="item">
               <label htmlFor="bedroom">Bedroom Number</label>
-              <input min={1} id="bedroom" name="bedroom" type="number" />
+              <input
+                defaultValue={updatePost && updatePost.bedroom}
+                min={1}
+                id="bedroom"
+                name="bedroom"
+                type="number"
+              />
             </div>
             <div className="item">
               <label htmlFor="bathroom">Bathroom Number</label>
-              <input min={1} id="bathroom" name="bathroom" type="number" />
+              <input
+                defaultValue={updatePost && updatePost.bathroom}
+                min={1}
+                id="bathroom"
+                name="bathroom"
+                type="number"
+              />
             </div>
             <div className="item">
               <label htmlFor="latitude">Latitude</label>
-              <input id="latitude" name="latitude" type="text" />
+              <input
+                defaultValue={updatePost && updatePost.latitude}
+                id="latitude"
+                name="latitude"
+                type="text"
+              />
             </div>
             <div className="item">
               <label htmlFor="longitude">Longitude</label>
-              <input id="longitude" name="longitude" type="text" />
+              <input
+                defaultValue={updatePost && updatePost.longitude}
+                id="longitude"
+                name="longitude"
+                type="text"
+              />
             </div>
             <div className="item">
               <label htmlFor="type">Type</label>
-              <select name="type">
+              <select name="type" defaultValue={updatePost && updatePost.type}>
                 <option value="Rent" defaultChecked>
                   Rent
                 </option>
@@ -117,7 +189,10 @@ function NewPostPage() {
             </div>
             <div className="item">
               <label htmlFor="type">Property</label>
-              <select name="property">
+              <select
+                name="property"
+                defaultValue={updatePost && updatePost.property}
+              >
                 <option value="Apartment">Apartment</option>
                 <option value="House">House</option>
                 <option value="Condo">Condo</option>
@@ -127,7 +202,10 @@ function NewPostPage() {
 
             <div className="item">
               <label htmlFor="utilities">Utilities Policy</label>
-              <select name="utilities">
+              <select
+                name="utilities"
+                defaultValue={updatePost && updatePost.utilities}
+              >
                 <option value="owner">Owner is responsible</option>
                 <option value="tenant">Tenant is responsible</option>
                 <option value="shared">Shared</option>
@@ -135,7 +213,7 @@ function NewPostPage() {
             </div>
             <div className="item">
               <label htmlFor="pet">Pet Policy</label>
-              <select name="pet">
+              <select name="pet" defaultValue={updatePost && updatePost.pet}>
                 <option value="allowed">Allowed</option>
                 <option value="not-allowed">Not Allowed</option>
               </select>
@@ -146,24 +224,49 @@ function NewPostPage() {
                 id="income"
                 name="income"
                 type="text"
+                defaultValue={updatePost && updatePost.income}
                 placeholder="Income Policy"
               />
             </div>
             <div className="item">
               <label htmlFor="size">Total Size (sqft)</label>
-              <input min={0} id="size" name="size" type="number" />
+              <input
+                defaultValue={updatePost && updatePost.size}
+                min={0}
+                id="size"
+                name="size"
+                type="number"
+              />
             </div>
             <div className="item">
               <label htmlFor="school">School</label>
-              <input min={0} id="school" name="school" type="number" />
+              <input
+                defaultValue={updatePost && updatePost.school}
+                min={0}
+                id="school"
+                name="school"
+                type="number"
+              />
             </div>
             <div className="item">
               <label htmlFor="bus">bus</label>
-              <input min={0} id="bus" name="bus" type="number" />
+              <input
+                defaultValue={updatePost && updatePost.bus}
+                min={0}
+                id="bus"
+                name="bus"
+                type="number"
+              />
             </div>
             <div className="item">
               <label htmlFor="restaurant">Restaurant</label>
-              <input min={0} id="restaurant" name="restaurant" type="number" />
+              <input
+                defaultValue={updatePost && updatePost.restaurant}
+                min={0}
+                id="restaurant"
+                name="restaurant"
+                type="number"
+              />
             </div>
             <button className="sendButton">Add</button>
           </form>

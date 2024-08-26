@@ -7,9 +7,9 @@ const postSchema = new Schema(
       required: true,
     },
     address: { type: String, required: true },
-    price: { type: String, required: true },
-    bedroom: { type: String, required: true },
-    bathroom: { type: String, required: true },
+    price: { type: Number, required: true },
+    bedroom: { type: Number, required: true },
+    bathroom: { type: Number, required: true },
     images: [
       {
         type: String,
@@ -30,6 +30,8 @@ const postSchema = new Schema(
     city: {
       type: String,
       required: true,
+      set: (value) =>
+        value.charAt(0).toUpperCase() + value.slice(1).toLowerCase(),
     },
     type: {
       type: String,

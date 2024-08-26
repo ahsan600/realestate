@@ -23,7 +23,7 @@ function Profile() {
 
       setTimeout(() => {
         updateUser(null);
-        userPosts(null);
+        setUserPosts(null);
         navigate("/");
       }, 1500);
     } catch (error) {

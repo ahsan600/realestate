@@ -110,56 +110,60 @@ const deleteUserPost = asyncHandler(async (req, res) => {
 const updateUserPost = asyncHandler(async (req, res) => {
   const { postData, postDetail } = req.body;
   const { postId } = req.params;
-  if (req.flies.length > 0) {
-    const localPostsPath = req.files;
-    if (localPostsPath.length === 0) {
-      throw new ApiError(401, "Post Images is Required");
-    }
 
-    const cloudinaryUrls = await Promise.all(
-      localPostsPath.map(
-        async (localPostPath) => await uploadImage(localPostPath.path)
-      )
-    );
-    if (cloudinaryUrls.length === 0) {
-      throw new ApiError(401, "Post Images is not Uploaded to Cloudinary");
-    }
+  try {
+    let cloudinaryUrls = [];
 
-    await Post.findByIdAndUpdate(
-      { _id: postId },
-      {
-        ...postData,
-        images: cloudinaryUrls,
-      }
-    );
-    await PostDetial.findByIdAndUpdate({ postId }, { ...postDetail });
-    res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          "Posts is Updated Successfully",
-          postDataInsert._id
-        )
+    if (req.files?.length > 0) {
+      const localPostsPath = req.files;
+
+      cloudinaryUrls = await Promise.all(
+        localPostsPath.map((localPostPath) => uploadImage(localPostPath.path))
       );
-  } else {
-    await Post.findByIdAndUpdate(
-      { _id: postId },
-      {
-        ...postData,
+
+      if (cloudinaryUrls.length === 0) {
+        throw new ApiError(401, "Post Images were not uploaded to Cloudinary");
       }
-    );
-    await PostDetial.findByIdAndUpdate({ postId }, { ...postDetail });
+    }
+    if (Array.isArray(postData.images)) {
+      cloudinaryUrls = [...postData.images, ...cloudinaryUrls];
+    } else if (postData.images) {
+      cloudinaryUrls = [postData.images, ...cloudinaryUrls];
+    }
+    await Post.findByIdAndUpdate(postId, {
+      ...postData,
+      ...(cloudinaryUrls.length > 0 && { images: cloudinaryUrls }),
+    });
+
+    await PostDetial.findOneAndUpdate({ postId }, { ...postDetail });
 
     res
       .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          "Posts is Updated Successfully",
-          postDataInsert._id
-        )
-      );
+      .json(new ApiResponse(200, "Post updated successfully", postId));
+  } catch (error) {
+    console.error("Error updating post:", error);
+    throw new ApiError(500, "Internal Server Error");
   }
 });
-export { createPost, getAllUserPosts, getPost, deleteUserPost, updateUserPost };
+const getAllPosts = asyncHandler(async (req, res) => {
+  const { minPrice, maxPrice, ...queryPost } = req.query;
+
+  const query = {
+    ...queryPost,
+    price: {
+      $gte: JSON.parse(req.query.minPrice),
+      $lte: JSON.parse(req.query.maxPrice),
+    },
+  };
+  console.log(queryPost);
+  const posts = await Post.find(query);
+  res.status(200).json(new ApiResponse(200, "Posts fetch successfully", posts));
+});
+export {
+  createPost,
+  getAllPosts,
+  getAllUserPosts,
+  getPost,
+  deleteUserPost,
+  updateUserPost,
+};

@@ -1,29 +1,33 @@
 import { useState } from "react";
 import search from "../../assets/search.png";
 import "./searchbar.scss";
+import { useNavigate } from "react-router-dom";
 function Searchbar() {
   const [activeType, setActiveType] = useState({
     type: "Buy",
-    location: "",
-    maxPrice: "",
-    minPrice: "",
   });
   const btnTypes = ["Buy", "Rent"];
+  const navigate = useNavigate();
   const handleTypeChange = (type) => {
     setActiveType((pv) => ({ ...pv, type }));
   };
-  const onHandleChange = (e) => {
-    const { name, value } = e.target;
-    setActiveType((pv) => ({ ...pv, [name]: value }));
-  };
-  const onHandleSubmit = (e) => {
+
+  const onHandleSubmit = async (e) => {
     e.preventDefault();
-    setActiveType((pv) => ({
-      ...pv,
-      location: "",
-      maxPrice: "",
-      minPrice: "",
-    }));
+    const fromData = new FormData(e.target);
+    let { city, minPrice, maxPrice } = Object.fromEntries(fromData);
+    if (
+      [city, minPrice, maxPrice].some((input) => {
+        input.trim() === "";
+      })
+    ) {
+      console.log("Required All Fields");
+      return;
+    }
+    city = city.charAt(0).toUpperCase() + city.slice(1);
+    navigate(
+      `/list?type=${activeType.type}&city=${city}&minPrice=${minPrice}&maxPrice=${maxPrice}`
+    );
   };
   return (
     <div className="searchBar">
@@ -39,30 +43,20 @@ function Searchbar() {
         ))}
       </div>
       <form onSubmit={onHandleSubmit}>
-        <input
-          type="text"
-          name="location"
-          placeholder="City Location"
-          onChange={onHandleChange}
-          value={activeType.location}
-        />
+        <input type="text" name="city" placeholder="City Location" />
         <input
           type="number"
           name="minPrice"
-          value={activeType.minPrice}
           min={0}
           max={10000000}
           placeholder="Min Price"
-          onChange={onHandleChange}
         />
         <input
           type="number"
           name="maxPrice"
           min={0}
           max={10000000}
-          value={activeType.maxPrice}
           placeholder="Max Price"
-          onChange={onHandleChange}
         />
         <button type="submit">
           <img src={search} alt="" />

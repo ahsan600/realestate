@@ -30,6 +30,7 @@ function App() {
         { path: "", element: <Profile /> },
         { path: "update-user", element: <UpdateProfile /> },
         { path: "add-post", element: <NewPostPage /> },
+        { path: "add-post/:postId", element: <NewPostPage /> },
       ],
     },
     {

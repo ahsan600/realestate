@@ -15,7 +15,7 @@ class PostServices {
   }
   async updatePost(id, data) {
     try {
-      const response = await apiRequest.post(
+      const response = await apiRequest.patch(
         "/api/posts/update-post/" + id,
         data,
         {
@@ -48,6 +48,18 @@ class PostServices {
   async deleteUserPost(id) {
     try {
       const response = await apiRequest.delete("/api/posts/delete-post/" + id);
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async getListPost(query) {
+    try {
+      const queryString = new URLSearchParams(query).toString();
+      console.log(query)
+      const response = await apiRequest.get(
+        `/api/posts/get-list-posts?${queryString}`
+      );
       return response.data;
     } catch (error) {
       console.log(error);
